@@ -1,0 +1,35 @@
+{
+  "name": "project-x",
+  "version": "1.0.0",
+  "description": "Ahmadov Kamal, BE Full Stack 1",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Kamal578/ABB_Tech_Academy_Full_Stack.git"
+  },
+  "keywords": [
+    "moment",
+    "bootstrap",
+    "eslint",
+    "gulp",
+    "browser-sync"
+  ],
+  "author": "Ahmadov Kamal",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Kamal578/ABB_Tech_Academy_Full_Stack/issues"
+  },
+  "homepage": "https://github.com/Kamal578/ABB_Tech_Academy_Full_Stack#readme",
+  "dependencies": {
+    "bootstrap": "^5.2.3",
+    "moment": "^2.29.4"
+  },
+  "devDependencies": {
+    "browser-sync": "^2.29.3",
+    "eslint": "^8.40.0",
+    "gulp": "^4.0.2"
+  }
+}
