@@ -1,0 +1,148 @@
+@import "variables";
+
+@mixin transition{
+  transition-property: all;
+  transition-duration: 0.3s;
+  transition-timing-function: ease-in-out;
+}
+
+nav {
+  .container {
+    padding: 30px 0;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+
+    .navlink {
+      width: 100%;
+      color: $main-text-color;
+      flex-direction: row;
+      display: flex;
+      justify-content: space-evenly;
+      font-size: 11px;
+      font-weight: 400;
+
+      li {
+        list-style-type: none;
+        padding: 10px;
+        cursor: pointer;
+        transition: all 0.3s ease-in-out;
+
+        &:hover {
+          color: $header-active;
+        }
+
+        &.active {
+          border-bottom: $header-active;
+        }
+      }
+    }
+
+    .button__nav {
+      display: none;
+      width: 44px;
+      height: 37px;
+      background-color: black;
+      flex-direction: column;
+      border: none;
+      align-items: center;
+      justify-content: center;
+      gap: 2px;
+      cursor: pointer;
+
+      .line {
+        width: 17px;
+        height: 2px;
+        background-color: white;
+        
+      }
+    }
+
+    .button__nav-x {
+      @extend .button__nav;
+
+      .line {
+        position: absolute;
+
+        &__one {
+          transform: rotateZ(45deg);
+        }
+
+        &__two {
+          transform: rotateZ(-45deg);
+        }
+      }
+    }
+
+    .button__nav--active {
+      display: none;
+    }
+  }
+
+  .dropdown {
+    position: absolute;
+    top: 67px;
+    display: none;
+    width: 182px;
+    background-color: #f5f5f5;
+    color: $main-text-color;
+    font-size: 11px;
+    font-weight: 400;
+    opacity: 0;
+
+    /* Add transition properties */
+    @include transition;
+
+    li {
+      list-style-type: none;
+      padding: 10px;
+      cursor: pointer;
+
+      &:hover {
+        background-color: #e5e5e5;
+      }
+    }
+
+    &--active {
+      display: block;
+
+      /* Add fade-in animation */
+      opacity: 1; /* Change opacity to 1 when active */
+      @include transition;
+      animation-name: fadeIn;
+      animation-duration: 0.3s;
+      animation-timing-function: ease-in-out;
+    }
+  }
+}
+
+@media screen and (max-width: 768px) {
+  nav {
+    .container {
+      .navlink {
+        display: none;
+      }
+
+      .button__nav--active {
+        display: flex;
+      }
+    }
+  }
+}
+
+@media screen and (min-width: 768px) {
+  nav {
+    .dropdown--active {
+      display: none;
+    }
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
