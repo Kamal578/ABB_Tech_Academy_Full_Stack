@@ -1,0 +1,15 @@
+  AJAX is a technique in web development that creates interactive and dynamic
+  web pages. It lets web browsers communicate with a server to get and send data
+  without reloading the whole page. This makes it possible to update specific
+  parts of a webpage smoothly without disturbing the user's experience. In
+  simpler terms, AJAX allows websites to fetch new information from a server and
+  display it on the page without refreshing everything. For example, think of a
+  social media platform where you can like or comment on a post without the
+  whole page reloading. That's what AJAX does! JavaScript, which is the
+  programming language used on the web, plays a crucial role in implementing
+  AJAX. With JavaScript, developers can make requests to a server, receive the
+  response, and update the webpage dynamically. This enables real-time updates,
+  interactive forms, auto-suggestions, and other features that enhance web
+  application functionality and interactivity. To sum it up, AJAX is a powerful
+  tool that makes web pages more interactive, responsive, and user-friendly by
+  enabling data retrieval and updates without needing a complete page reload.
