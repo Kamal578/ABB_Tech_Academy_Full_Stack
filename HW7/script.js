@@ -1,179 +1,180 @@
-// script.js
+// Get the main container element with the class "container"
+const mainDiv = document.querySelector(".container");
 
-const usersURL = "https://ajax.test-danit.com/api/json/users";
-const postsURL = "https://ajax.test-danit.com/api/json/posts";
+// Create a Card class to represent a card element
+class Card {
+  constructor(title, text, name, email, postId) {
+    this.title = title;
+    this.text = text;
+    this.name = name;
+    this.email = email;
+    this.postId = postId;
+  }
 
-// Function to send HTTP GET request
-async function getData(url) {
-  const response = await fetch(url);
-  const data = await response.json();
-  return data;
+  // Render the card element with the provided data
+  renderCard() {
+    // Create an HTML string representing the card with dynamic data
+    const displayCard = `
+      <div class="card" data-post-id="${this.postId}">
+        <header>
+          <div class="profile-picture"></div>
+          <div class="info-section">
+            <h2 class="title">${this.title}</h2>
+            <a href="" class="name-link">
+              <p class="name">@${this.name}</p>
+            </a>
+          </div>
+        </header>
+        <main>
+          <p class="text">${this.text}</p>
+        </main>
+        <footer>
+          <p class="email">${this.email}</p>
+          <button class="delete-btn">Delete</button>
+        </footer>
+      </div>`;
+
+    // Insert the card HTML into the main container
+    mainDiv.insertAdjacentHTML("beforeend", displayCard);
+  }
+
+  // Delete the card by sending a DELETE request to the server
+  deleteCard() {
+    fetch(`https://ajax.test-danit.com/api/json/posts/${this.postId}`, {
+      method: "DELETE",
+    }).then(() => {
+      // Find the card element by its data-post-id attribute
+      const cardElement = document.querySelector(
+        `[data-post-id="${this.postId}"]`
+      );
+      if (cardElement) {
+        // Hide the card by setting its display to "none"
+        cardElement.style.display = "none";
+      }
+    });
+  }
 }
 
-// Function to send HTTP DELETE request
-async function deleteData(url) {
-  const response = await fetch(url, { method: "DELETE" });
-  return response.ok;
-}
+// Fetch the users and posts data from the server using Promises
+const usersRequest = fetch("https://ajax.test-danit.com/api/json/users").then(
+  (response) => response.json()
+);
+const postsRequest = fetch("https://ajax.test-danit.com/api/json/posts").then(
+  (response) => response.json()
+);
 
-// Function to send HTTP POST request
-async function postData(url, data) {
-  const response = await fetch(url, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(data),
+// Use Promise.all to wait for both requests to complete
+Promise.all([usersRequest, postsRequest])
+  .then(([usersInfo, postsInfo]) => {
+    // Loop through users and posts to create and render cards for matching data
+    for (user of usersInfo) {
+      for (post of postsInfo) {
+        if (user.id === post.userId) {
+          let card = new Card(
+            post.title,
+            post.body,
+            user.name,
+            user.email,
+            post.id
+          );
+          card.renderCard();
+        }
+      }
+    }
+
+    // After a delay (1000ms), set up event listeners for delete buttons
+    setTimeout(() => {
+      const deleteBtns = document.querySelectorAll("button.delete-btn");
+      deleteBtns.forEach((btn) => {
+        const postId = btn.closest(".card").getAttribute("data-post-id");
+        const card = new Card();
+        card.postId = postId;
+
+        // Add a click event listener to each delete button to trigger card deletion
+        btn.addEventListener("click", () => {
+          card.deleteCard();
+          new Dialog("jsdialog1").show(
+            "Press ESC key or click the button to close"
+          );
+          document.querySelector(".overlay").classList.add("open");
+        });
+      });
+    }, 100);
+  })
+  .catch((error) => {
+    // Handle any errors that occur during the fetch process
+    console.log(error);
   });
-  const newPost = await response.json();
-  return newPost;
-}
 
-// Function to send HTTP PUT request
-async function putData(url, data) {
-  const response = await fetch(url, {
-    method: "PUT",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(data),
-  });
-  return response.ok;
-}
+// unnecessary code, decided to add a nice dialog box
 
-// Function to create a post card
-function createPostCard(post) {
-  const card = document.createElement("div");
-  card.classList.add("card");
-  card.innerHTML = `
-    <h3>${post.title}</h3>
-    <p>${post.body}</p>
-    <p><strong>Author:</strong> ${post.user.name} ${post.user.username} (${post.user.email})</p>
-    <div class="actions">
-      <button class="delete" data-post-id="${post.id}">Delete</button>
-      <button class="edit" data-post-id="${post.id}">Edit</button>
+class Dialog {
+  // Declare static properties to store the dialog elements
+  static dialog = null;
+  static dialogBody = null;
+  static closeButton = null;
+  static button = null;
+
+  constructor(dialogId) {
+    // Check if the dialog element already exists, if not, create it
+    if (!Dialog.dialog) {
+      Dialog.dialog = this.#createHTMLDialogBox(dialogId);
+    }
+    Dialog.dialogBody = Dialog.dialog.querySelector(".dialog-body");
+    Dialog.closeButton = Dialog.dialog.querySelector(".dialog-close");
+    Dialog.button = Dialog.dialog.querySelector(".dialog-button");
+
+    // Bind the close method to the current instance
+    this.close = this.close.bind(this);
+
+    // Add an event listener for the two buttons.
+    Dialog.closeButton.addEventListener("click", this.close);
+    Dialog.button.addEventListener("click", this.close);
+  }
+
+  /**
+   * @param {boolean} value
+   */
+  set visible(value) {
+    Dialog.dialog.classList.toggle("open", value);
+    document.querySelector(".overlay").classList.toggle("open", value);
+  }
+
+  show(message) {
+    Dialog.dialogBody.textContent = message;
+    document.addEventListener("keydown", this.close);
+    // Use requestAnimationFrame to force transitions to run at the first time.
+    requestAnimationFrame(() => {
+      this.visible = true;
+    });
+  }
+
+  close(event) {
+    // Check if the ESC key was pressed or the button was clicked
+    if (event?.key === "Escape" || event?.type === "click") {
+      this.visible = false;
+      document.removeEventListener("keydown", this.close);
+    }
+  }
+
+  // Declare a private method to create a HTML dialog element and append it to the document
+  #createHTMLDialogBox(dialogId) {
+    const overlay = document.createElement("div");
+    overlay.classList.add("overlay");
+    const dialog = document.createElement("div");
+    dialog.classList.add("dialog");
+    dialog.id = dialogId;
+    dialog.innerHTML = `
+    <div class="dialog-header">
+      <span class="dialog-title">Tweet succefully deleted</span>
+      <button type="button" class="dialog-close">&times;</button>
     </div>
-  `;
-
-  // Delete button click event
-  const deleteButton = card.querySelector(".delete");
-  deleteButton.addEventListener("click", async () => {
-    const postId = deleteButton.dataset.postId;
-    const success = await deleteData(`${postsURL}/${postId}`);
-    if (success) {
-      card.remove();
-    }
-  });
-
-  // Edit button click event
-  const editButton = card.querySelector(".edit");
-  editButton.addEventListener("click", () => {
-    const newTitle = prompt("Enter new title:", post.title);
-    const newText = prompt("Enter new text:", post.body);
-    if (newTitle && newText) {
-      const updatedPost = {
-        ...post,
-        title: newTitle,
-        body: newText,
-      };
-      putData(`${postsURL}/${post.id}`, updatedPost);
-      card.querySelector("h3").textContent = newTitle;
-      card.querySelector("p").textContent = newText;
-    }
-  });
-
-  return card;
-}
-
-// Function to display the posts on the page
-function displayPosts(posts) {
-  const postsContainer = document.getElementById("postsContainer");
-  postsContainer.innerHTML = "";
-
-  posts.forEach((post) => {
-    const card = createPostCard(post);
-    postsContainer.appendChild(card);
-  });
-}
-
-// Function to display the loading animation
-function showLoadingAnimation() {
-  document.getElementById("loading").style.display = "block";
-}
-
-// Function to hide the loading animation
-function hideLoadingAnimation() {
-  document.getElementById("loading").style.display = "none";
-}
-
-// Function to open the modal for creating a new post
-function openModal() {
-  document.getElementById("modal").style.display = "block";
-}
-
-// Function to close the modal for creating a new post
-function closeModal() {
-  document.getElementById("modal").style.display = "none";
-  document.getElementById("postTitle").value = "";
-  document.getElementById("postText").value = "";
-}
-
-// Function to handle the "Add Post" button click event
-function handleAddPost() {
-  openModal();
-}
-
-// Function to handle the "Create" button click event in the modal
-async function handleCreatePost() {
-  const postTitle = document.getElementById("postTitle").value;
-  const postText = document.getElementById("postText").value;
-
-  if (postTitle && postText) {
-    const newPost = {
-      userId: 1, // Assigning the user with id: 1 as the author
-      title: postTitle,
-      body: postText,
-    };
-
-    const createdPost = await postData(postsURL, newPost);
-    const card = createPostCard(createdPost);
-    const postsContainer = document.getElementById("postsContainer");
-    postsContainer.insertBefore(card, postsContainer.firstChild);
-
-    closeModal();
+    <div class="dialog-body">This is an alert message.</div>
+    <div class="dialog-footer">
+      <button type="button" class="dialog-button">OK</button>
+    </div>
+    `;
+    document.body.appendChild(dialog);
+    return dialog;
   }
 }
-
-// Function to initialize the web page
-async function init() {
-  showLoadingAnimation();
-
-  try {
-    const [users, posts] = await Promise.all([
-      getData(usersURL),
-      getData(postsURL),
-    ]);
-    const postsWithUser = posts.map((post) => ({
-      ...post,
-      user: users.find((user) => user.id === post.userId),
-    }));
-
-    displayPosts(postsWithUser);
-  } catch (error) {
-    console.error(error);
-  } finally {
-    hideLoadingAnimation();
-  }
-}
-
-// Event listeners
-document
-  .getElementById("addPostButton")
-  .addEventListener("click", handleAddPost);
-document
-  .getElementById("createPostButton")
-  .addEventListener("click", handleCreatePost);
-document.querySelector(".close").addEventListener("click", closeModal);
-
-// Initialize the web page
-init();
