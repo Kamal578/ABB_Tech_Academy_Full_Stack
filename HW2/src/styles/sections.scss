@@ -1,28 +1,28 @@
 @import "variables";
 
-@mixin flex($direction: column, $gap: 20px) {
-  display: flex;
-  flex-direction: $direction;
-  gap: $gap;
-}
-
 .recent-posts {
   width: 100%;
   h2 {
     font-weight: 700;
     font-size: 14px;
-    color: $main-text-color;
+    color: $subheader-font;
     margin-bottom: 20px;
   }
 
   .posts {
-    @include flex(column, 20px);
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
 
     .posts__post__info {
-      @include flex(column, 10px);
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
     }
     &__post {
-      @include flex(column, 20px);
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
 
       &__image {
         width: 160px;
@@ -31,7 +31,7 @@
       &__subheader {
         font-size: 14;
         font-weight: 700;
-        color: $main-text-color;
+        color: $subheader-font;
       }
 
       &__comments {
@@ -54,7 +54,7 @@
     padding: 30px 0;
   }
   &__header {
-    color: $main-text-color;
+    color: $subheader-font;
     font-size: 14px;
     font-weight: 700;
     margin-bottom: 13px;
