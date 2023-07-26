@@ -1,81 +1,67 @@
-const gulp = require('gulp');
-const sass = require('gulp-sass')(require('sass'));
-const browserSync = require('browser-sync').create();
-const minifyCSS = require('gulp-clean-css');
-const uglify = require('gulp-uglify');
-const clean = require('gulp-clean');
-const concat = require('gulp-concat');
-const imagemin = require('gulp-imagemin');
-const autoprefixer = require('gulp-autoprefixer');
+const gulp = require("gulp");
+const sass = require("gulp-sass")(require("sass"));
+const browserSync = require("browser-sync").create();
+const minifyCSS = require("gulp-clean-css");
+const jsMinify = require("gulp-js-minify");
+const uglify = require("gulp-uglify");
+const clean = require("gulp-clean");
+const concat = require("gulp-concat");
+const imagemin = require("gulp-imagemin");
+const autoprefixer = require("gulp-autoprefixer");
 
-// Define source and destination paths
-const paths = {
-  src: {
-    styles: 'src/scss/**/*.scss',
-    scripts: 'src/scripts/*.js',
-    images: 'src/img/**/*',
-  },
-  dist: {
-    base: 'dist/',
-    styles: 'dist/css',
-    scripts: 'dist/js',
-    images: 'dist/img',
-  },
-  html: './*.html',
-};
-
-// Task to compile Sass, concatenate, minify, and autoprefix CSS
-gulp.task('styles', function () {
+gulp.task("styles", function () {
   return gulp
-    .src(paths.src.styles)
-    .pipe(sass().on('error', sass.logError))
-    .pipe(concat('style.css'))
+    .src("src/styles/**/*.scss")
+    .pipe(sass().on("error", sass.logError))
+    .pipe(concat("style.css"))
     .pipe(autoprefixer())
     .pipe(minifyCSS())
-    .pipe(gulp.dest(paths.dist.styles))
+    .pipe(gulp.dest("dist/styles"))
     .pipe(browserSync.stream());
 });
-
-// Task to optimize images
-gulp.task('img', function () {
+gulp.task("images", function () {
   return gulp
-    .src(paths.src.images)
+    .src("src/images/**/*")
     .pipe(imagemin())
-    .pipe(gulp.dest(paths.dist.images));
+    .pipe(gulp.dest("dist/images"));
 });
-
-// Task to concatenate, uglify, and move JavaScript files
-gulp.task('scripts', function () {
+gulp.task("scripts", function () {
   return gulp
-    .src(paths.src.scripts)
-    .pipe(concat('scripts.min.js'))
+    .src("src/scripts/*.js")
+    .pipe(concat("scripts.min.js"))
     .pipe(uglify())
-    .pipe(gulp.dest(paths.dist.scripts));
+    .pipe(gulp.dest("dist/js"));
+});
+gulp.task("clean", function () {
+  return gulp.src("dist", { allowEmpty: true, read: false }).pipe(clean());
 });
 
-// Task to clean the 'dist' directory
-gulp.task('clean', function () {
-  return gulp.src(paths.dist.base, { allowEmpty: true, read: false }).pipe(clean());
-});
+gulp.task(
+  "dev",
+  gulp.series("styles", "scripts", "images", function () {
+    browserSync.init({
+      server: {
+        baseDir: ".",
+      },
+    });
 
-// Task for development mode
-gulp.task('dev', gulp.series('styles', 'scripts', 'img', function () {
-  browserSync.init({
-    server: {
-      baseDir: '.',
-    },
-  });
+    gulp
+      .watch("src/scripts/*.js", gulp.series("scripts"))
+      .on("change", browserSync.reload);
+    gulp
+      .watch("src/styles/*.scss", gulp.series("styles"))
+      .on("change", browserSync.reload);
+    gulp
+      .watch("src/images/", gulp.series("images"))
+      .on("change", browserSync.reload);
+  })
+);
 
-  gulp.watch(paths.src.scripts, gulp.series('scripts')).on('change', browserSync.reload);
-  gulp.watch(paths.src.styles, gulp.series('styles')).on('change', browserSync.reload);
-  gulp.watch(paths.src.images, gulp.series('img')).on('change', browserSync.reload);
-}));
+gulp.task(
+  "build",
+  gulp.series("clean", "styles", "scripts", function () {
+    return gulp.src("./*.html").pipe(gulp.dest("dist"));
+  })
+);
 
-// Task to build the project (including HTML files)
-gulp.task('build', gulp.series('clean', 'styles', 'scripts', function () {
-  return gulp.src(paths.html).pipe(gulp.dest(paths.dist.base));
-}));
-
-// Default task
-gulp.task('default', gulp.series('dev'));
-
+gulp.task("default", gulp.series("dev"));
