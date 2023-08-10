@@ -1,0 +1,39 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400&family=Open+Sans:wght@400;500;600;700;800&display=swap');
+
+:root{
+  --darkBlue: #0f1626;
+  --lightBlue: #513be0;
+  --greyish: #606676;
+}
+
+
+body {
+  display:  flex;
+  justify-content: center;
+  margin: 0;
+  background-color: var(--darkBlue);
+  font-family: 'Open Sans', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.App > h1{
+  color:white;
+  text-align: center;
+  margin-top: 50px;
+  font-size: 50px;
+}
+
+.App > h2{
+  color: var(--greyish);
+  text-align: center;
+  margin-top: 25px;
+  font-weight: lighter;
+  font-size: 16px;
+}
+
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}

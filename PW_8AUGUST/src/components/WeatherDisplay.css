@@ -1,0 +1,46 @@
+/* src/components/WeatherDisplay.css */
+.weather-display {
+    background-color: transparent;
+    color: white;
+    border: #1a2455 5px solid;
+    border-radius: 10px;
+    text-align: center;
+    margin-bottom: 20px;
+  }
+  
+  .weather-display h2 {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+
+  .temperature {
+    font-size: 2rem;
+    font-weight: 700;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-left: 10px;
+  }
+
+  .temperature > span {
+    font-size: 1.5rem;
+    font-weight: 400;
+  }
+
+  .weather-display h2 > p {
+    text-transform: capitalize;
+  }
+  
+  .weather-display p {
+    margin: 5px 0;
+  }
+  
+  .weather-icon {
+    width: 100px;
+    height: 100px;
+    margin-top: 10px;
+  }
+  
