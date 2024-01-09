@@ -1,0 +1,12 @@
+• Linear algebra, Fourier transforms and probability - 5,125 E
+• Electromagnetism - 1,250 E
+• Computer Science 5a - 13,125 B:
+    • Parallel Programming - 13,750 A 
+    • Software Certification - 12,500 B
+• Computer Science 5b - 10,158 E:
+    • Network Algorithms - 14,330 A
+    • Cryptography - 17,500 A
+    • Combinatorics, Probability and Statistics - 4,400 E
+• Humanities 4 - 17,003 A
+    • Management - 17,500 A
+    • Preparation for Internship - 16,505 A
